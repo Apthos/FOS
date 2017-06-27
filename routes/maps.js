@@ -21,7 +21,7 @@ lineReader.on('line', function (line) {
 var cleaner = null;
 
 lineReader.on('close', function () {
-    cleaner = new Cleaner(collection);
+    cleaner = new Cleaner(collection, true, false);
 });
 
 /* GET home page. */
