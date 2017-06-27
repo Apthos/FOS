@@ -12,6 +12,7 @@ var lineReader = require('readline').createInterface({
 
 lineReader.on('line', function (line) {
     var pieces = line.split(',');
+
     var p = new Pin(pieces[1], parseFloat(pieces[2]),
         parseFloat(pieces[3]), pieces[4], pieces[5], pieces[8]);
     collection.push(p);
@@ -30,7 +31,7 @@ router.get('/', function(req, res, next) {
         collections: {
             pins: JSON.stringify(collection)
         },
-        scripts: ['../public/javascripts/pin.js']
+        scripts: ['../public/javascripts/pin.js', '../public/javascripts/Grid.js']
     });
 });
 

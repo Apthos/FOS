@@ -20,6 +20,8 @@ html
                 border: 1px solid #999;
             }
         script(src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJIlUHgkbX3pUv7guWvW4E6eqg_DlpaP0")
+        script(src="/javascripts/Grid.js")
+        script(src="/javascripts/Chunk.js")
         script.
 
             var pins = JSON.parse('!{collections.pins}');
@@ -91,6 +93,9 @@ html
                 });
 
                 rectangle.setMap(map);
+
+                var grid = new Grid(H_Lat, L_Lat, H_Long, L_Long);
+
             }
 
             function addPin(Pin){
