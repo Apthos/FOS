@@ -21,10 +21,16 @@ html
             }
         script(src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJIlUHgkbX3pUv7guWvW4E6eqg_DlpaP0")
         script(src="/javascripts/Grid.js")
+        script(src="/javascripts/Pin.js")
         script(src="/javascripts/Chunk.js")
         script.
 
-            var pins = JSON.parse('!{collections.pins}');
+            var pins = []; // making array of actual pin objects
+            //JSON = Java Script Object Notation
+            JSON.parse('!{collections.pins}').forEach(function (p) {
+               pins.push(new Pin(p.TimeStamp, p.Latitude, p.Longitude, p.IMEI,
+               p.ScannedValue, p.Ranch));
+            });
 
             var centerlatitude = 0.0;
             var centerlongitude = 0.0;
@@ -62,6 +68,7 @@ html
             console.log("Lat: " + String(centerlatitude) + " / " + "Long: " + String(centerlongitude));
 
             var map;
+            var grid;
 
             var center = new google.maps.LatLng(centerlatitude, centerlongitude);
 
@@ -94,7 +101,7 @@ html
 
                 rectangle.setMap(map);
 
-                var grid = new Grid(H_Lat, L_Lat, H_Long, L_Long);
+                grid = new Grid(H_Lat, L_Lat, H_Long, L_Long, 20, pins, map);
 
             }
 
@@ -121,7 +128,6 @@ html
                     map: map
                 });
             }
-
 
 
             google.maps.event.addDomListener(window, 'load', initialize);

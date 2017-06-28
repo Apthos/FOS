@@ -1,5 +1,7 @@
-var express = require('express');
-var fs = require('fs');
+try {
+    var express = require('express');
+    var fs = require('fs');
+} catch (e){ /* nothing */ }
 // latitude N & S
 // Lat1 and Lat2 are a reference to the two points that you
 
@@ -12,15 +14,24 @@ function Chunk(Lat1, Long1, Lat2, Long2, map){
         paths:[
         new google.maps.LatLng(Lat1,Long1),
         new google.maps.LatLng(Lat1,Long2),
-        new google.maps.LatLng(Lat2,Long1),
-        new google.maps.LatLng(Lat2,Long2)
+        new google.maps.LatLng(Lat2,Long2),
+        new google.maps.LatLng(Lat2,Long1)
         ]
-    }
+    });
 
     // allows for you to see the Chunk onto the screen
     Boundary.setMap(map);
+// create the array
+    this.points = [];
+//  array addPoint  pin == variable
+    this.addPoint = function(pin){
+        this.points.push(pin);
+    }
 
 
 }
 
-module.exports = Chunk;
+try {
+    module.exports = Chunk;
+} catch (e){ /* nothing */ }
+

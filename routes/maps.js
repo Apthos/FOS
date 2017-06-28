@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var Pin = require('../public/javascripts/pin');
+var Pin = require('../public/javascripts/Pin');
 var Cleaner = require('../public/javascripts/cleaner');
 var path = require('path');
 
@@ -30,8 +30,7 @@ router.get('/', function(req, res, next) {
     res.render('maps', {
         collections: {
             pins: JSON.stringify(collection)
-        },
-        scripts: ['../public/javascripts/pin.js', '../public/javascripts/Grid.js']
+        }
     });
 });
 
