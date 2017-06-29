@@ -1,4 +1,5 @@
-var express = require('express');
+try{ var express = require('express');
+} catch(e){ /* nothing */ }
 
 function Pin(TimeStamp, Latitude, Longitude, IMEI, ScannedValue, Ranch){
     this.TimeStamp = TimeStamp;
@@ -15,4 +16,5 @@ function Pin(TimeStamp, Latitude, Longitude, IMEI, ScannedValue, Ranch){
     }
 }
 
-module.exports = Pin;
+try { module.exports = Pin;
+} catch(e){ /* nothing */ }

@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var users = require('./routes/users');
 var maps = require('./routes/maps');
+var spline = require('./routes/spline');
 
 var app = express();
 
@@ -25,9 +26,20 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use("/javascripts", express.static("./outJavascripts"));
+
 app.use('/', index);
 app.use('/users', users);
 app.use('/maps', maps);
+app.use('/spline', spline);
+
+var spawn = require("child_process").spawn;
+var process = spawn('python',["public/python/test1.py", "anything"]);
+
+process.stdout.on('data', function (data){
+    console.log(data.toString());
+});
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

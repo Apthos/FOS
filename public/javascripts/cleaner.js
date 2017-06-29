@@ -1,6 +1,7 @@
 var express = require('express');
 var fs = require('fs');
 
+
 function Cleaner(pinCollection, cleaning, writing){
 
     if(cleaning) {
