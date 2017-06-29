@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var Pin = require('../public/javascripts/pin');
-var Cleaner = require('../public/javascripts/cleaner');
+var Cleaner = require('../public/javascripts/Cleaner');
 var path = require('path');
 var bspline = require('b-spline');
 
