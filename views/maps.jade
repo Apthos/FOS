@@ -19,10 +19,14 @@ html
                 padding: 5px;
                 border: 1px solid #999;
             }
+
+        script(type='text/javascript' src='/javascripts/pin.js')
         script(src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJIlUHgkbX3pUv7guWvW4E6eqg_DlpaP0")
         script.
 
             var pins = JSON.parse('!{collections.pins}');
+            var pin = new Pin("kkss", "asas", "asa", "asasa");
+            console.log(pin.toString());
 
             var centerlatitude = 0.0;
             var centerlongitude = 0.0;

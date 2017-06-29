@@ -29,8 +29,7 @@ router.get('/', function(req, res, next) {
     res.render('maps', {
         collections: {
             pins: JSON.stringify(collection)
-        },
-        scripts: ['../public/javascripts/pin.js']
+        }
     });
 });
 
