@@ -38,7 +38,6 @@ function Cleaner(pinCollection, cleaning, writing){
 
             }
         });
-
         console.log("Duplicate Collection: " + dupCollection.length);
         /* fs = require('fs');
          fs.writeFile('../public/data/bad.txt', dupCollection + "\n", function (err) {
