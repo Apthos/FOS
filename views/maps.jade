@@ -72,15 +72,6 @@ html
 
             var center = new google.maps.LatLng(centerlatitude, centerlongitude);
 
-            var rectangle = new google.maps.Polygon({
-                paths: [
-                    new google.maps.LatLng(H_Lat, H_Long),
-                    new google.maps.LatLng(L_Lat, H_Long),
-                    new google.maps.LatLng(L_Lat, L_Long),
-                    new google.maps.LatLng(H_Lat, L_Long)
-                ]
-            });
-
             function initialize() {
                 var mapOptions = {
                     zoom: 15,
@@ -99,12 +90,11 @@ html
                     placeMarker(e.latLng, map);
                 });
 
-                rectangle.setMap(map);
-
-                grid = new Grid(H_Lat, L_Lat, H_Long, L_Long, 20, pins, map);
+                grid = new Grid(H_Lat, L_Lat, H_Long, L_Long, 40, pins, map);
 
             }
 
+            // (p
             function addPin(Pin){
                 console.log("Pin:" + String(Pin.Latitude) + " - " + String(Pin.Longitude));
                 var location = new google.maps.LatLng(Pin.Latitude, Pin.Longitude);
