@@ -6,7 +6,7 @@ var path = require('path');
 
 var collection = [];
 
-var file = '/../public/data/set2.txt';
+var file = '/../public/data/set1.txt';
 
 var lineReader = require('readline').createInterface({
     input: require('fs').createReadStream(__dirname + file)
