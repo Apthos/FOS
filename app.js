@@ -8,7 +8,6 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var users = require('./routes/users');
 var maps = require('./routes/maps');
-var spline = require('./routes/spline');
 
 var app = express();
 
@@ -31,7 +30,6 @@ app.use("/javascripts", express.static("./outJavascripts"));
 app.use('/', index);
 app.use('/users', users);
 app.use('/maps', maps);
-app.use('/spline', spline);
 
 var spawn = require("child_process").spawn;
 var process = spawn('python',["public/python/test1.py", "anything"]);
