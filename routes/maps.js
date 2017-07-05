@@ -6,7 +6,7 @@ var path = require('path');
 
 var collection = [];
 
-var file = '/../public/data/set2.txt';
+var file = '/../public/data/set1.txt';
 
 var lineReader = require('readline').createInterface({
     input: require('fs').createReadStream(__dirname + file)
@@ -18,7 +18,7 @@ lineReader.on('line', function (line) {
     var pieces = line.split(',');
 
 
-    if (file == 'set3.txt') {
+    if (file == 'set1.txt') {
         var p = new Pin(pieces[1], parseFloat(pieces[2]),
             parseFloat(pieces[3]), pieces[4], pieces[5], pieces[8]);
     } else {
@@ -32,7 +32,7 @@ var cleaner = null;
 
 lineReader.on('close', function () {
   
-    cleaner = new Cleaner(collection, false, false);
+    cleaner = new Cleaner(collection, true, true);
 
 });
 
