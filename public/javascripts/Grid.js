@@ -70,7 +70,9 @@ try { var express = require('express');
         // chunkCollection
         chunkCollection.forEach(function(row){
             row.forEach(function (chunk) {
-                chunk.draw(map);
+                if(!chunk.isEmpty()){
+                    chunk.draw(map);
+                }
             });
         });
 
