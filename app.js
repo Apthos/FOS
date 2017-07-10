@@ -31,12 +31,12 @@ app.use('/', index);
 app.use('/users', users);
 app.use('/maps', maps);
 
-var spawn = require("child_process").spawn;
-var process = spawn('python',["public/python/test1.py", "anything"]);
+// var spawn = require("child_process").spawn;
+// var process = spawn('python',["public/python/test1.py", "anything"]);
 
-process.stdout.on('data', function (data){
-    console.log(data.toString());
-});
+// process.stdout.on('data', function (data){
+// console.log(data.toString());
+// });
 
 
 // catch 404 and forward to error handler
