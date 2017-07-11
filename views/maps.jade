@@ -23,52 +23,16 @@ html
         script(src="/javascripts/Grid.js")
         script(src="/javascripts/Pin.js")
         script(src="/javascripts/Chunk.js")
+        script(src="/javascripts/Farm.js")
         script.
 
-            var pins = []; // making array of actual pin objects
-            //JSON = Java Script Object Notation
-            JSON.parse('!{collections.pins}').forEach(function (p) {
-               pins.push(new Pin(p.TimeStamp, p.Latitude, p.Longitude, p.IMEI,
-               p.ScannedValue, p.Ranch));
+            var farms = [];
+
+            JSON.parse('!{collections.farms}').forEach(function (f) {
+                farms.push(new Farm(f.chunks))
             });
 
-            var centerlatitude = 0.0;
-            var centerlongitude = 0.0;
-
-            var H_Lat = -91;
-            var L_Lat = 91;
-            var H_Long = -181
-            var L_Long = 181;
-
-            pins.forEach(function(pin){
-                if (pin.Latitude > H_Lat && pin.Latitude != null) {
-                    H_Lat = pin.Latitude;
-                }
-
-                if (pin.Latitude < L_Lat && pin.Latitude != null){
-                    L_Lat = pin.Latitude;
-                }
-
-                if (pin.Longitude > H_Long && pin.Longitude != null){
-                    H_Long = pin.Longitude;
-                }
-
-                if (pin.Longitude < L_Long && pin.Longitude != null) {
-                    L_Long = pin.Longitude;
-                }
-
-            });
-
-            console.log("HLat: " + String(H_Lat) + " \ LLat: " + String(L_Lat));
-            console.log("HLong: " + String(H_Long) + " \ LLong: " + String(L_Long));
-
-            centerlatitude = (H_Lat + L_Lat)/2;
-            centerlongitude = (H_Long + L_Long)/2;
-
-            console.log("Lat: " + String(centerlatitude) + " / " + "Long: " + String(centerlongitude));
-
-            var map;
-            var grid;
+            console.log(farms);
 
             var center = new google.maps.LatLng(centerlatitude, centerlongitude);
 
@@ -88,9 +52,8 @@ html
                 google.maps.event.addListener(map, 'click', function (e) {
                     console.log(e.latLng);
                     placeMarker(e.latLng, map);
+                    placeMarker({lat: e.latLng.lat() + .0009, lng: e.latLng.lng()}, map)
                 });
-
-                grid = new Grid(H_Lat, L_Lat, H_Long, L_Long, 100, pins, map);
 
             }
 
