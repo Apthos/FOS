@@ -6,6 +6,7 @@ var Cleaner = require('../public/javascripts/Cleaner');
 var path = require('path');
 
 var loader = require('../public/javascripts/Loader').getInstance();
+loader.cleanSet(true, true);
 
 var grid = new Grid(loader.getCurrentSet(), 100);
 
