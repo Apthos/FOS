@@ -12,9 +12,6 @@ var grid = new Grid(loader.getCurrentSet(), 100);
 
 var farms = grid.getFarms();
 
-
-
-
 router.get('/', function(req, res, next) {
     res.render('maps', {
         collections: {

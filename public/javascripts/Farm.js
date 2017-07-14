@@ -3,13 +3,21 @@ try {
     var fs = require('fs');
 } catch (e){ /* nothing */ }
 
-function Farm(chunks){
-    this.chunks = chunks;
+function Farm(pins){
+    this.pins = pins;
+
+    this.getPins = function (){
+        return pins;
+    };
+
+    this.addPin = function(pin){
+        this.pins.push(pin);
+    };
 
     this.toString = function(){
         console.log("{");
 
-        chunks.forEach(function(chunk){
+        this.pins.forEach(function(chunk){
            console.log("(x:" + chunk.x + ", y:" + chunk.y  + "), \n");
         });
 

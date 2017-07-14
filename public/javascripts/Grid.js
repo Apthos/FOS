@@ -1,7 +1,8 @@
 try {
     var Chunk = require('./Chunk.js');
     var Farm = require('./Farm.js');
-} catch (e) {console.log("Something fucked up!");}
+} catch (e) {console.log("Grid: Could not laod server side resources! " +
+    "disregard if seeing this on client!");}
 
 
 // Long N & S
@@ -17,20 +18,27 @@ function Grid(pins, density) {
     var L_Long = 181;
 
     pins.forEach(function(pin){
+
+        //console.log("Lat: " + pin.Latitude + " Long: " + pin.Longitude);
+
         if (pin.Latitude > H_Lat && pin.Latitude !== null) {
             H_Lat = pin.Latitude;
+            console.log("New H_Lat: " + pin.Latitude);
         }
 
         if (pin.Latitude < L_Lat && pin.Latitude !== null){
             L_Lat = pin.Latitude;
+            console.log("New L_Lat: " + pin.Latitude);
         }
 
         if (pin.Longitude > H_Long && pin.Longitude !== null){
             H_Long = pin.Longitude;
+            console.log("New H_Long: " + pin.Longitude);
         }
 
         if (pin.Longitude < L_Long && pin.Longitude !== null) {
             L_Long = pin.Longitude;
+            console.log("New L_Long: " + pin.Longitude);
         }
 
     });
@@ -56,6 +64,10 @@ function Grid(pins, density) {
 
     var recHeight = (H_Lat - L_Lat) / density;
     var recWidth = (H_Long - L_Long) / density;
+
+    console.log("rec width: " + recWidth);
+    console.log("rec height: " + recHeight);
+
 // the distance from point 10 and point 4 is
 // Density is how many rectangles will be on screen.
 
@@ -96,14 +108,37 @@ function Grid(pins, density) {
         }
     };
 
+    this.getChunks = function() {
+        var chunks = [];
+
+        console.log(chunkCollection);
+
+        for (var x = 0; x < density; x++) {
+            for (var y = 0; y < density; y++) {
+                if (!chunkCollection[x][y].isEmpty()){
+                    chunks.push(chunkCollection[x][y]);
+                }
+            }
+        }
+
+        return chunks;
+    };
+
     this.getFarms = function () {
         var farms = [];
         for (var x = 0; x < density; x++) {
             for (var y = 0; y < density; y++) {
                 var chunk = chunkCollection[x][y];
                 if (chunk !== null && !chunk.isEmpty()){
-                    var farm = new Farm(chunk.getSurrounding(this, null));
-                    farm.chunks.forEach(function(chunk){
+                    var chunks = chunk.getSurrounding(this, null);
+                    var pins = [];
+                    for (var i = 0; i < chunks.length; i++){
+                        for (var ii = 0; ii < chunks[i].pins.length; ii++){
+                            pins.push(chunks[i].pins[ii]);
+                        }
+                    }
+                    var farm = new Farm(pins);
+                    chunks.forEach(function(chunk){
                         chunkCollection[chunk.x][chunk.y] = new Chunk();
                     });
                     farms.push(farm);
@@ -112,6 +147,10 @@ function Grid(pins, density) {
         }
         return farms;
     };
+
+    this.getCenter = function(){
+        return {lat: L_Lat + ((H_Lat - L_Lat)/2), lng: L_Long + ((H_Long - L_Long)/2)};
+    }
 }
 
 try {
