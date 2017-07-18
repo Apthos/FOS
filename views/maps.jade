@@ -151,7 +151,8 @@ block body
             #navbarSupportedContent.collapse.navbar-collapse
                 ul.navbar-nav.mr-auto
                     li.nav-item.dropdown
-                        a#navbarDropdownMenuLink.nav-link.dropdown-toggle(href='http://example.com', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+                        a#navbarDropdownMenuLink.nav-link.dropdown-toggle(href='http://example.com',
+                        data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
                             | Dropdown link
                         #farms.dropdown-menu(aria-labelledby='navbarDropdownMenuLink')
                             each d, i in JSON.parse(collections.farms)
