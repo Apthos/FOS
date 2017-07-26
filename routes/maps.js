@@ -12,10 +12,13 @@ var grid = new Grid(loader.getCurrentSet(), 100);
 
 var farms = grid.getFarms();
 
+var points = loader.points();
+
 router.get('/', function(req, res, next) {
     res.render('maps', {
         collections: {
-            farms: JSON.stringify(farms)
+            farms: JSON.stringify(farms),
+            points: JSON.stringify(points)
         }
     });
 });

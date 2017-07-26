@@ -43,6 +43,34 @@ function Loader(fpath) {
 
     };
 
+    this.points = function(points) {
+        var points = [];
+        var file_dir = __dirname + '/../data/points.csv';
+
+        if (!fs.existsSync(file_dir)) {
+            console.error("'" + file_dir + "' does not exist!");
+            return;
+        }
+
+        var lines = require('fs').readFileSync(file_dir, 'utf-8')
+            .split('\n')
+            .filter(Boolean);
+
+        var x = [];
+        var y = [];
+
+        for (var i = 0; i < lines.length; i++) {
+            var pieces = lines[i].split(',');
+            x.push(parseFloat(pieces[0]));
+            y.push(parseFloat(pieces[1]));
+        }
+
+        // console.log(x.toString());
+        // console.log(y.toString());
+
+        return [x, y];
+    };
+
     this.cleanSet = function (set, cleaning, writing) {
         var cleaner = new Cleaner(collection, cleaning, writing);
     };

@@ -29,6 +29,10 @@ html
 
             var farms = [];
 
+            var points = JSON.parse('!{collections.points}');
+
+            console.log(points);
+
             JSON.parse('!{collections.farms}').forEach(function (f) {
                 var farm = new Farm([]);
                 f.pins.forEach(function(p){
@@ -41,7 +45,7 @@ html
 
             console.log(farms);
 
-            var salinas = new google.maps.LatLng(36.6777, -121.6555);
+            var salinas = new google.maps.LatLng(36.679571, -121.724406);
 
             function initialize() {
                 var mapOptions = {
@@ -55,6 +59,15 @@ html
                     mapOptions);
 
                 placeMarker(salinas, map);
+
+                // ------
+
+                for(var i = 0; i < points[0].length; i++){
+                    var pointplacer = new google.maps.LatLng(points[1][i], points[0][i]);
+                    placeMarker(pointplacer, map);
+                }
+
+                // ------
 
                 google.maps.event.addListener(map, 'click', function (e) {
                     console.log(e.latLng);

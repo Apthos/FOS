@@ -20,10 +20,10 @@ function Cleaner(pinCollection, cleaning, writing) {
             if (priorPin === null || (pin.TimeStamp == priorPin.TimeStamp
                 && pin.latitude == priorPin.latitude && pin.longitude == priorPin.longitude)) {
                 priorPin = pin;
-                dupCollection.push(priorPin);
+                newCollection.push(priorPin);
             } else {
                 priorPin = pin;
-                newCollection.push(priorPin);
+                dupCollection.push(priorPin);
                 if (writing) {
                     fs.appendFile(getNewestWritable(), priorPin + "\n", function (err) {
                         if (err) return console.log(err);
