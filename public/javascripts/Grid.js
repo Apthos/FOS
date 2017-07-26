@@ -1,6 +1,7 @@
 try {
     var Chunk = require('./Chunk.js');
     var Farm = require('./Farm.js');
+    var Pin = require('./Pin.js');
 } catch (e) {console.log("Grid: Could not laod server side resources! " +
     "disregard if seeing this on client!");}
 
@@ -51,8 +52,8 @@ function Grid(pins, density) {
     H_Long = H_Long + long_extend;
     L_Long = L_Long - long_extend;
 
-    console.log("HLat: " + String(H_Lat) + " \ LLat: " + String(L_Lat));
-    console.log("HLong: " + String(H_Long) + " \ LLong: " + String(L_Long));
+    //console.log("HLat: " + String(H_Lat) + " \ LLat: " + String(L_Lat));
+    //console.log("HLong: " + String(H_Long) + " \ LLong: " + String(L_Long));
 
     var chunkCollection = [];
 
@@ -65,8 +66,8 @@ function Grid(pins, density) {
     var recHeight = (H_Lat - L_Lat) / density;
     var recWidth = (H_Long - L_Long) / density;
 
-    console.log("rec width: " + recWidth);
-    console.log("rec height: " + recHeight);
+    //console.log("rec width: " + recWidth);
+    //console.log("rec height: " + recHeight);
 
 // the distance from point 10 and point 4 is
 // Density is how many rectangles will be on screen.
@@ -84,6 +85,7 @@ function Grid(pins, density) {
     }
 
     pins.forEach(function (p) {
+
         var lat_index = (p.Latitude - L_Lat) / recHeight;
         var long_index = (p.Longitude - L_Long) / recWidth;
 
@@ -93,6 +95,8 @@ function Grid(pins, density) {
         try {
             chunkCollection[long_index][lat_index].addPin(p);
         } catch (e) {
+            console.log("valid: " + p.isValid());
+
             console.log("P| lat:" + p.Latitude + " long:" + p.Longitude);
             console.log("P| latI:" + lat_index + " longI:" + long_index);
             console.error("Data is not possible! Something fucked up");
@@ -137,11 +141,12 @@ function Grid(pins, density) {
                             pins.push(chunks[i].pins[ii]);
                         }
                     }
-                    var farm = new Farm(pins);
+                    var farm = new Farm(pins, false);
                     chunks.forEach(function(chunk){
                         chunkCollection[chunk.x][chunk.y] = new Chunk();
                     });
-                    farms.push(farm);
+                    if (!(farm.pins.length < 100))
+                        farms.push(farm);
                 }
             }
         }
