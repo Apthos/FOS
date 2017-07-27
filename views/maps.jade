@@ -9,6 +9,7 @@ html
                 margin: 0px;
                 padding: 0px
             }
+
             #panel {
                 position: absolute;
                 top: 5px;
@@ -29,13 +30,9 @@ html
 
             var farms = [];
 
-            var points = JSON.parse('!{collections.points}');
-
-            console.log(points);
-
             JSON.parse('!{collections.farms}').forEach(function (f) {
                 var farm = new Farm([]);
-                f.pins.forEach(function(p){
+                f.pins.forEach(function (p) {
                     farm.addPin(p);
                 });
                 farms.push(farm);
@@ -45,7 +42,10 @@ html
 
             console.log(farms);
 
-            var salinas = new google.maps.LatLng(36.679571, -121.724406);
+            var salinas = new google.maps.LatLng(36.6777, -121.6555);
+            var map = null;
+
+            var markers = [];
 
             function initialize() {
                 var mapOptions = {
@@ -60,27 +60,16 @@ html
 
                 placeMarker(salinas, map);
 
-                // ------
-
-                for(var i = 0; i < points[0].length; i++){
-                    var pointplacer = new google.maps.LatLng(points[1][i], points[0][i]);
-                    placeMarker(pointplacer, map);
-                }
-
-                // ------
-
                 google.maps.event.addListener(map, 'click', function (e) {
                     console.log(e.latLng);
                     placeMarker(e.latLng, map);
-                    placeMarker({lat: e.latLng.lat() + .0009, lng: e.latLng.lng()}, map)
                 });
 
                 bindFarms();
 
             }
 
-            // (p
-            function addPin(Pin){
+            function addPin(Pin) {
                 console.log("Pin:" + String(Pin.Latitude) + " - " + String(Pin.Longitude));
                 var location = new google.maps.LatLng(Pin.Latitude, Pin.Longitude);
                 var circle = new google.maps.Circle({
@@ -94,7 +83,14 @@ html
                     radius: 3
                 });
                 circle.setMap(map);
+                markers.push(circle);
+            }
 
+            function clearMap(){
+                for (var i = 0; i < markers.length; i++) {
+                    markers[i].setMap(null);
+                }
+                markers = [];
             }
 
             function placeMarker(position, map) {
@@ -102,24 +98,27 @@ html
                     position: position,
                     map: map
                 });
+                markers.push(marker);
             }
 
-            function bindFarms(){
+            function bindFarms() {
                 var farmLinks = document.getElementById('farms').getElementsByTagName('a');
 
-                for (var i = 0; i < farmLinks.length; i++){
+                for (var i = 0; i < farmLinks.length; i++) {
                     console.log(farmLinks[i]);
-                    farmLinks[i].onclick = function(e){
+                    farmLinks[i].onclick = function (e) {
+                        clearMap();
+
                         var ele = e.target;
                         var id = ele.innerHTML;
                         id = parseInt(id.split(" ")[1]) - 1;
                         var farm = farms[id];
-                        console.log(farm);
-                        var grid = new Grid(farm.getPins(), 15);
-                        map.panTo(grid.getCenter());
-                        grid.getChunks().forEach(function(chunk){
-                            chunk.draw(map);
+                        map.panTo(farm.getCenter());
+                        farm.drawBounds(map);
+                        farm.pins.forEach(function (pin) {
+                            addPin(pin);
                         });
+
                     }
                 }
 
@@ -128,7 +127,9 @@ html
 
             google.maps.event.addDomListener(window, 'load', initialize);
 
-            window.onbeforeunload = function(){ window.scrollTo(0,0) };
+            window.onbeforeunload = function () {
+                window.scrollTo(0, 0)
+            };
         link(rel='stylesheet',
         href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css',
         integrity='sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ',
@@ -137,42 +138,29 @@ html
         integrity='sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn',
         crossorigin='anonymous')
     style.
-        body{
+        body {
             overflow: hidden;
         }
 
 block body
-        script.
-            var plotMyShit = function () {
-                farms.forEach(function(farm){
-                    farm.pins.forEach(function (pin){
-                        addPin(pin);
-                    });
-                });
-            }
+    nav.navbar.navbar-toggleable-md.navbar-inverse.bg-primary
+        button.navbar-toggler.navbar-toggler-right(type='button',
+        data-toggle='collapse',
+        data-target='#navbarSupportedContent',
+        aria-controls='navbarSupportedContent',
+        aria-expanded='false',
+        aria-label='Toggle navigation')
+            span.navbar-toggler-icon
 
-        nav.navbar.navbar-toggleable-md.navbar-inverse.bg-primary
-            button.navbar-toggler.navbar-toggler-right(type='button',
-            data-toggle='collapse',
-            data-target='#navbarSupportedContent',
-            aria-controls='navbarSupportedContent',
-            aria-expanded='false',
-            aria-label='Toggle navigation')
-                span.navbar-toggler-icon
+        a.navbar-brand(href='#') FOS
+        #navbarSupportedContent.collapse.navbar-collapse
+            ul.navbar-nav.mr-auto
+                li.nav-item.dropdown
+                    a#navbarDropdownMenuLink.nav-link.dropdown-toggle(href='http://example.com',
+                    data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+                        | Dropdown link
+                    #farms.dropdown-menu(aria-labelledby='navbarDropdownMenuLink')
+                        each d, i in JSON.parse(collections.farms)
+                            a.dropdown-item(href='#')= 'Farm ' + String(i + 1)
 
-            a.navbar-brand(href='#') FOS
-            #navbarSupportedContent.collapse.navbar-collapse
-                ul.navbar-nav.mr-auto
-                    li.nav-item.dropdown
-                        a#navbarDropdownMenuLink.nav-link.dropdown-toggle(href='http://example.com',
-                        data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
-                            | Dropdown link
-                        #farms.dropdown-menu(aria-labelledby='navbarDropdownMenuLink')
-                            each d, i in JSON.parse(collections.farms)
-                                a.dropdown-item(href='#')= 'Farm ' + String(i+1)
-
-                    li.nav-item
-                        #plotPoints
-                        a.nav-link(href="#", onclick='plotMyShit()') Plot
-
-        #map-canvas
+    #map-canvas

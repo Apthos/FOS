@@ -10,10 +10,19 @@ function Pin(TimeStamp, Latitude, Longitude, IMEI, ScannedValue, Ranch){
     this.Ranch = Ranch;
 
     this.toString = function () {
-        return String(TimeStamp) + ', ' + String(Latitude) + ', ' +
-                String(Longitude) + ',' + String(IMEI) + ', ' +
-                String(ScannedValue) + ', ' + String(Ranch);
+        return  "LAT:" + String(Latitude) + '/LONG:' +
+                String(Longitude);
+    };
+
+    this.isValid = function(){
+        return (String(this.Latitude) != 'NaN' || String(this.Longitude) != 'NaN')
+    };
+
+    this.serialize = function(){
+        return this.TimeStamp + "," + this.Latitude + "," + this.Longitude + "," + this.IMEI +
+                "," + this.ScannedValue + "," + this.Ranch;
     }
+
 }
 
 try { module.exports = Pin;

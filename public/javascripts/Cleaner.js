@@ -10,22 +10,26 @@ function Cleaner(pinCollection, cleaning, writing) {
         var priorPin = null;
 
         if (writing) {
-            fs.writeFile(getNewestWritable(), "", function (err) {
+            var writingFile = getNewestWritable();
+            fs.writeFile(writingFile, "", function (err) {
                 if (err)
                     return console.log(err);
             });
         }
 
         pinCollection.forEach(function (pin) {
-            if (priorPin === null || (pin.TimeStamp == priorPin.TimeStamp
-                && pin.latitude == priorPin.latitude && pin.longitude == priorPin.longitude)) {
-                priorPin = pin;
-                newCollection.push(priorPin);
-            } else {
+
+            if (priorPin === null) {
                 priorPin = pin;
                 dupCollection.push(priorPin);
+            } else if (pin.Latitude === priorPin.Latitude && pin.Longitude === priorPin.Longitude) {
+                priorPin = pin;
+                dupCollection.push(priorPin);
+            } else  {
+                priorPin = pin;
+                newCollection.push(priorPin);
                 if (writing) {
-                    fs.appendFile(getNewestWritable(), priorPin + "\n", function (err) {
+                    fs.appendFile(writingFile, priorPin.serialize() + "\n", function (err) {
                         if (err) return console.log(err);
                     });
                 }
@@ -34,17 +38,7 @@ function Cleaner(pinCollection, cleaning, writing) {
         });
 
         console.log("Duplicate Collection: " + dupCollection.length);
-        /* fs = require('fs');
-         fs.writeFile('../public/data/bad.txt', dupCollection + "\n", function (err) {
-         if (err)
-         return console.log(err);
-         }); */
         console.log("Good Collection: " + newCollection.length);
-        /* fs = require('fs');
-         fs.writeFile('../public/data/good.txt', newCollection + "\n", function (err) {
-         if (err)
-         return console.log(err);
-         }); */
         console.log("Duplicate + Good = " + (dupCollection.length + newCollection.length));
         console.log("Original Collection: " + pinCollection.length);
 
@@ -52,7 +46,7 @@ function Cleaner(pinCollection, cleaning, writing) {
 }
 
 function getNewestWritable() {
-    var latestFile = "";
+    var latestFile;
     var fs = require('fs');
     var L = Number.MIN_VALUE;
     var items = fs.readdirSync(__dirname + '/../data', 'utf8');
