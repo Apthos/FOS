@@ -9,6 +9,8 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 var maps = require('./routes/maps');
 
+var Grid = require('./public/javascripts/Grid');
+
 var app = express();
 
 // view engine setup
@@ -27,17 +29,23 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use("/javascripts", express.static("./outJavascripts"));
 
+var loader = require('./public/javascripts/Loader').getInstance();
+//loader.cleanSet(true, true); # not needed since set is already clean
+
+var grid = new Grid(loader.getCurrentSet(), 100);
+var farms = grid.getFarms();
+
+// ===
+
+
+
+// ===
+
+farms[3].createBoundary();
+
 app.use('/', index);
 app.use('/users', users);
 app.use('/maps', maps);
-
-// var spawn = require("child_process").spawn;
-// var process = spawn('python',["public/python/test1.py", "anything"]);
-
-// process.stdout.on('data', function (data){
-// console.log(data.toString());
-// });
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

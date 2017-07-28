@@ -13,13 +13,6 @@ var farms = grid.getFarms();
 
 farms[3].writeCSV();
 
-var spawn = require("child_process").spawn;
-var process = spawn('python',["../public/python/test1.py", "anything"]);
-
-process.stdout.on('data', function (data){
-console.log(data.toString());
-});
-
 router.get('/', function(req, res, next) {
     res.render('maps', {
         collections: {

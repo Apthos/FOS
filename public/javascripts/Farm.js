@@ -62,7 +62,7 @@ function Farm(pins, bypass){
                 paths: [
                     new google.maps.LatLng(H_Lat.Latitude, H_Lat.Longitude),
                     new google.maps.LatLng(H_Long.Latitude, H_Long.Longitude),
-                    new google.maps.LatLng(L_Lat.Latitude, H_Lat.Longitude),
+                    new google.maps.LatLng(L_Lat.Latitude, L_Lat.Longitude),
                     new google.maps.LatLng(L_Long.Latitude, L_Long.Longitude)
                 ],
                 fillColor: color
@@ -70,15 +70,19 @@ function Farm(pins, bypass){
 
             Boundary.setMap(map);
         }
-        // var that = this;
-        // google.maps.event.addDomListener(Boundary, 'click', function (e) {
-        //     console.log("Clicking Farm");
-        // });
+
+        var that = this;
+        google.maps.event.addDomListener(Boundary, 'click', function (e) {
+            console.log("Clicking Farm");
+        });
+
+        return Boundary;
 
     };
 
     this.getCenter = function(){
-        return {lat: L_Lat.Latitude + ((H_Lat.Latitude - L_Lat.Latitude)/2), lng: L_Long.Longitude + ((H_Long.Longitude - L_Long.Longitude)/2)};
+        return {lat: L_Lat.Latitude + ((H_Lat.Latitude - L_Lat.Latitude)/2),
+            lng: L_Long.Longitude + ((H_Long.Longitude - L_Long.Longitude)/2)};
     };
 
     this.allowBypass = function(allow) {
@@ -86,11 +90,38 @@ function Farm(pins, bypass){
     };
 
     this.hasBoundary = function(){
-        return (this.boundary === null);
+        return (this.boundary !== null);
     };
 
     this.setBoundary = function (boundary) {
         this.boundary = boundary;
+    };
+
+    this.createBoundary = function(){
+
+        console.log("Creating the boundary!");
+
+        try {
+            var spawn = require("child_process").spawn;
+        } catch (e) {
+            console.warn("Error! this is a server side process! please contact admin!")
+            return;
+        }
+
+        var x = [];
+        var y = [];
+
+        for (var i = 0; i < pins.length; i++){
+            x.push(pins[i].Latitude);
+            y.push(pins[i].Longitude);
+        }
+
+        console.log("creating process! : " + __dirname);
+        var process = spawn('python',[__dirname + "/../python/spline/spline.py", x, y, 27, 30]);
+
+        process.stdout.on('data', function (data){
+            console.log("From Spline Program: " + data.toString());
+        });
     };
 
     initialize(this);
