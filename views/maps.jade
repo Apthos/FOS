@@ -71,9 +71,12 @@ html
 
                 // ------
 
-                for(var i = 0; i < points[0].length; i++){
-                    var pointplacer = new google.maps.LatLng(points[1][i], points[0][i]);
-                    placeMarker(pointplacer, map);
+                function simulatePoints() {
+
+                    for (var i = 0; i < points[0].length; i++) {
+                        var pointplacer = new google.maps.LatLng(points[1][i], points[0][i]);
+                        placeMarker(pointplacer, map);
+                    }
                 }
 
                 // ------
@@ -104,7 +107,7 @@ html
                 markers.push(circle);
             }
 
-            function clearMap(){
+            function clearMap() {
                 for (var i = 0; i < markers.length; i++) {
                     markers[i].setMap(null);
                 }
@@ -162,6 +165,7 @@ html
         }
 
 block body
+
     nav.navbar.navbar-toggleable-md.navbar-inverse.bg-inverse.navbar-padding
         button.navbar-toggler.navbar-toggler-right(type='button',
         data-toggle='collapse',
@@ -171,15 +175,26 @@ block body
         aria-label='Toggle navigation')
             span.navbar-toggler-icon
 
-        a.navbar-brand(href='http://food-origins.com') <img src = "http://food-origins.com/images/site-logo.png" alt = "logo" style = "width: 50px;height 50px>
+        a.navbar-brand(href='http://food-origins.com') <img src = "http://food-origins.com/images/site-logo.png" alt = "logo" style = "width: 50px;height 50px">
         #navbarSupportedContent.collapse.navbar-collapse
             ul.navbar-nav.mr-auto
                 li.nav-item.dropdown
-                    a#navbarDropdownMenuLink.nav-link.dropdown-toggle.editbar(href='http://example.com',
+                    a#navbarDropdownMenuLink.nav-link.dropdown-toggle.editbar(href='https://en.wikipedia.org/wiki/Farm',
                     data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
                         | Farms
                     #farms.dropdown-menu(aria-labelledby='navbarDropdownMenuLink')
                         each d, i in JSON.parse(collections.farms)
                             a.dropdown-item(href='#')= 'Farm ' + String(i + 1)
+                //li.nav-item.options
+                //    a#navbarDropdownMenuLink.nav-link.dropdown-toggle(href='http://example.com',
+                //    data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+                //        | Options
+                //    #options.dropdown-menu(aria-labelledby='navbarDropdownMenuLink')
+                //        each d, i in JSON.parse(collections.farms)
+                //            a.dropdown-item(href='#')= 'Option ' + String(i + 1)
+                li.nav-item.heatmap
+                    a#navbarDropdownMenuLink.nav-link.toggle(href='#',
+                    data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+                        | Heat Map
 
     #map-canvas

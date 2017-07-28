@@ -1,0 +1,12 @@
+.navbar-padding {
+    padding-top: 0%;
+    padding-bottom: 0%;
+}
+
+.editbar{
+    display: inline-block;
+    vertical-align: top;
+    font-family: 'Hind', sans-serif !important;
+    font-size: large;
+    <!--color: whitesmoke !important-->
+}
