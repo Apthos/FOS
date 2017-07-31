@@ -128,6 +128,42 @@ function Farm(pins, bypass){
     }
 }
 
+
 try {
     module.exports = Farm;
 } catch (e) { /* nothing */ }
+
+// /*          Farms in their own files           */
+// for (var i = 0; i < Farm.length; i++) {
+//     this.writeCSV = function () {
+//         var writingFile = __dirname + "/../data/farm" + i + ".csv";
+//
+//         fs.writeFile(writingFile, "", function (err) {
+//             if (err) return console.log(err);
+//         });
+//
+//         for (var i = 0; i < pins.length; i++) {
+//             var data = String(pins[i].Latitude);
+//             fs.appendFileSync(writingFile, data);
+//
+//             if (i < pins.length - 1) {
+//                 fs.appendFileSync(writingFile, ',');
+//             } else {
+//                 console.log("new line!");
+//                 fs.appendFileSync(writingFile, '\n');
+//             }
+//         }
+//
+//         for (var i = 0; i < pins.length; i++) {
+//             var data = String(pins[i].Longitude);
+//             fs.appendFileSync(writingFile, data);
+//
+//             if (i < pins.length - 1) {
+//                 fs.appendFileSync(writingFile, ',');
+//             } else {
+//                 fs.appendFileSync(writingFile, '\n');
+//             }
+//         }
+//
+//     }
+// }
