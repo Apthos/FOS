@@ -70,15 +70,10 @@ html
                 placeMarker(salinas, map);
 
                 // ------
-
-                function simulatePoints() {
-
                     for (var i = 0; i < points[0].length; i++) {
                         var pointplacer = new google.maps.LatLng(points[1][i], points[0][i]);
                         placeMarker(pointplacer, map);
                     }
-                }
-
                 // ------
 
                 google.maps.event.addListener(map, 'click', function (e) {
