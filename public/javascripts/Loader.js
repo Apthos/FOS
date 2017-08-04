@@ -9,6 +9,7 @@ var instance = null;
 function Loader(fpath) {
 
     var collection = [];
+    var farms = [];
 
     this.initialize = function (path) {
         // var result = this.connectMongo("localhost", "27017", "Kevin", "Password", "admin");
@@ -25,6 +26,8 @@ function Loader(fpath) {
 
     this.loadSet = function(set, format){
 
+        console.log('before loading : ' + set + ' : ' + collection.length);
+
         if (format) {
             var file_dir = __dirname + '/../data/' + set;
         } else {
@@ -36,7 +39,7 @@ function Loader(fpath) {
             return;
         }
 
-        collection = [];
+        //collection = [];
 
         var file = file_dir.split('/')[file_dir.split('/').length - 1];
 
@@ -49,10 +52,13 @@ function Loader(fpath) {
 
             if (file == 'set1.txt') {
                 var p = new Pin(pieces[1], parseFloat(pieces[2]),
-                    parseFloat(pieces[3]), pieces[4], pieces[5], pieces[8]);
+                    parseFloat(pieces[3]), pieces[4], pieces[5], pieces[8], null, null);
+            } else if (file == 'Generated.csv') {
+                var p = new Pin(pieces[0] + " " + pieces[1], parseFloat(pieces[3]), parseFloat(pieces[2]),
+                    null, null, null, pieces[4], pieces[5]);
             } else {
                 var p = new Pin(pieces[0], parseFloat(pieces[1]),
-                    parseFloat(pieces[2]), pieces[3], pieces[4], pieces[7]);
+                    parseFloat(pieces[2]), pieces[3], pieces[4], pieces[7], null, null);
             }
 
             if (p.isValid()) {
@@ -102,6 +108,18 @@ function Loader(fpath) {
 
             return [true, db];
         });
+    };
+
+    this.getFarms = function(){
+        return this.farms;
+    };
+
+    this.setFarms = function(farms){
+        this.farms = farms;
+    };
+
+    this.addFarm = function(farm){
+        this.farms.push(farm);
     };
 
     this.initialize(fpath);

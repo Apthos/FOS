@@ -10,6 +10,7 @@ var users = require('./routes/users');
 var maps = require('./routes/maps');
 
 var Grid = require('./public/javascripts/Grid');
+var Farm = require('./public/javascripts/Farm');
 
 var app = express();
 
@@ -30,18 +31,33 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use("/javascripts", express.static("./outJavascripts"));
 
 var loader = require('./public/javascripts/Loader').getInstance();
+loader.loadSet('Generated.csv', true);
 //loader.cleanSet(true, true); # not needed since set is already clean
 
-var grid = new Grid(loader.getCurrentSet(), 100);
+var grid = new Grid(loader.getCurrentSet(), 500);
 var farms = grid.getFarms();
 
-// ===
+var testGrid = new Grid(farms[4].pins ,15);
+var testChunks = testGrid.getEdgeChunks();
+var points = [];
 
+for (var i = 0; i < testChunks.length; i++){
+  var chunkPins = testChunks[i].pins;
+  for (var ii = 0; ii < chunkPins.length; ii++){
+    points.push(chunkPins[ii]);
+  }
+}
 
+var farm = new Farm(points);
+farms.push(farm);
 
-// ===
+farms.forEach(function (farm) {
+  if (!farm.hasBoundary()){
+    farm.createBoundary(20);
+  }
+});
 
-farms[3].createBoundary();
+loader.setFarms(farms);
 
 app.use('/', index);
 app.use('/users', users);

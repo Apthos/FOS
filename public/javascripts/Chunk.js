@@ -30,11 +30,30 @@ function Chunk(x, y, width, height, b_lat, b_long) {
         this.pinCount += 1;
     };
 
+    this.select = function(map){
+
+        var color = '#270dc7';
+
+        var Boundary = new google.maps.Polygon({
+            paths: [
+                new google.maps.LatLng(Lat1, Long1),
+                new google.maps.LatLng(Lat1, Long2),
+                new google.maps.LatLng(Lat2, Long2),
+                new google.maps.LatLng(Lat2, Long1)
+            ],
+            fillColor: color,
+            fillOpacity: 100
+        });
+
+        Boundary.setMap(map);
+
+    };
+
     this.draw = function (map) {
         // console.log("Trying to draw a fucken box you son of a bitch client ass nigga");
 
         var color = '#feffff';
-        if (this.pinCount > 4) {
+        if (this.pinCount >= 4) {
             color = '#C70039';
             // console.log("Is green");
         } else if (this.pinCount == 3) {
@@ -43,8 +62,8 @@ function Chunk(x, y, width, height, b_lat, b_long) {
         } else if (this.pinCount == 2) {
             color = '#FFC300';
             // console.log("Is not green");
-        } else if (this.pinCount >= 1) {
-            color = '#feffff';
+        } else if (this.pinCount == 1) {
+            color = '#49ff46';
             // console.log("Is not green");
         }
 
@@ -66,7 +85,11 @@ function Chunk(x, y, width, height, b_lat, b_long) {
         var that = this;
 
         google.maps.event.addDomListener(Boundary, 'click', function (e) {
-            that.getSurrounding(grid, null);
+            console.log('<=== Chunk ' + x + '-' + y + ' ===>');
+            that.pins.forEach(function(pin){
+                console.log(pin.toString());
+            });
+            console.log('<======>');
         });
 
     };
@@ -75,6 +98,32 @@ function Chunk(x, y, width, height, b_lat, b_long) {
 
     this.isEmpty = function () {
         return this.pins.length < 1;
+    };
+
+    this.isEdge = function(grid, density){
+        if (this.isEmpty())
+            return false;
+
+        var order = [[-1, 1], [0, 1], [1, 1], [1, 0],
+            [1, -1], [0, -1], [-1, -1], [-1, 0]];
+
+        console.log(density);
+
+        for (var i = 0; i < order.length; i++){
+            var nx = this.x + order[i][0];
+            var ny = this.y + order[i][1];
+
+            if ((nx < 0 || nx > density-1) || (ny < 0 || ny > density-1)){
+                return true;
+            } else {
+                console.log(nx + ' ' + ny);
+                var chunk = grid.getChunk(nx, ny);
+                if (chunk.isEmpty()){
+                    return true
+                }
+            }
+        }
+        return false;
     };
 
     this.getSurrounding = function (grid, chunks) {

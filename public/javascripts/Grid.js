@@ -2,7 +2,7 @@ try {
     var Chunk = require('./Chunk.js');
     var Farm = require('./Farm.js');
     var Pin = require('./Pin.js');
-} catch (e) {console.log("Grid: Could not laod server side resources! " +
+} catch (e) {console.log("Grid: Could not load server side resources! " +
     "disregard if seeing this on client!");}
 
 
@@ -13,15 +13,13 @@ try {
 // is passing all
 
 function Grid(pins, density) {
+    this.Density = density;
     var H_Lat = -91;
     var L_Lat = 91;
     var H_Long = -181;
     var L_Long = 181;
 
     pins.forEach(function(pin){
-
-        //console.log("Lat: " + pin.Latitude + " Long: " + pin.Longitude);
-
         if (pin.Latitude > H_Lat && pin.Latitude !== null) {
             H_Lat = pin.Latitude;
             console.log("New H_Lat: " + pin.Latitude);
@@ -128,6 +126,14 @@ function Grid(pins, density) {
         return chunks;
     };
 
+    this.draw = function(map){
+      chunkCollection.forEach(function(col){
+          col.forEach(function(chunk){
+              chunk.draw(map);
+          });
+      });
+    };
+
     this.getFarms = function () {
         var farms = [];
         for (var x = 0; x < density; x++) {
@@ -151,6 +157,20 @@ function Grid(pins, density) {
             }
         }
         return farms;
+    };
+
+    this.getEdgeChunks = function (){
+        var edgeChunks = [];
+        var that = this;
+
+        chunkCollection.forEach(function(col){
+            col.forEach(function(chunk){
+                if (chunk.isEdge(that, density))
+                    edgeChunks.push(chunk)
+            });
+        });
+
+        return edgeChunks;
     };
 
     this.getCenter = function(){

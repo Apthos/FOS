@@ -1,13 +1,15 @@
 try { var express = require('express');
 } catch (e) { /* nothing */ }
 
-function Pin(TimeStamp, Latitude, Longitude, IMEI, ScannedValue, Ranch){
+function Pin(TimeStamp, Latitude, Longitude, IMEI, ScannedValue, Ranch, Pallet, Quality){
     this.TimeStamp = TimeStamp;
     this.Latitude = Latitude;
     this.Longitude = Longitude;
     this.IMEI = IMEI;
     this.ScannedValue = ScannedValue;
     this.Ranch = Ranch;
+    this.Pallet = Pallet;
+    this.Quality = parseFloat(Quality);
 
     this.toString = function () {
         return  "LAT:" + String(Latitude) + '/LONG:' +
@@ -20,7 +22,7 @@ function Pin(TimeStamp, Latitude, Longitude, IMEI, ScannedValue, Ranch){
 
     this.serialize = function(){
         return this.TimeStamp + "," + this.Latitude + "," + this.Longitude + "," + this.IMEI +
-                "," + this.ScannedValue + "," + this.Ranch;
+                "," + this.ScannedValue + "," + this.Ranch + ',' + this.Pallet + ',' + this.Quality;
     }
 
 }

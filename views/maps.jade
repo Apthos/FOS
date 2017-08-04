@@ -2,7 +2,8 @@ doctype html
 html
     head
         meta(charset="utf-8")
-        title FOS
+        <link href="https://fonts.googleapis.com/css?family=Federo|Hind" rel="stylesheet">
+        title Dashboard
         style.
             html, body, #map-canvas {
                 height: 100%;
@@ -26,6 +27,7 @@ html
         script(src="/javascripts/Pin.js")
         script(src="/javascripts/Chunk.js")
         script(src="/javascripts/Farm.js")
+        script(src="/javascripts/Boundary.js")
         script.
 
             var farms = [];
@@ -35,12 +37,10 @@ html
                 f.pins.forEach(function (p) {
                     farm.addPin(p);
                 });
+                var boundary = new Boundary(f.boundary.posts);
+                farm.setBoundary(boundary);
                 farms.push(farm);
             });
-
-            console.log(farms[1]);
-
-            console.log(farms);
 
             var salinas = new google.maps.LatLng(36.6777, -121.6555);
             var map = null;
@@ -73,11 +73,11 @@ html
                 console.log("Pin:" + String(Pin.Latitude) + " - " + String(Pin.Longitude));
                 var location = new google.maps.LatLng(Pin.Latitude, Pin.Longitude);
                 var circle = new google.maps.Circle({
-                    strokeColor: '#FF0000',
+                    strokeColor: '#ff5b54',
                     strokeOpacity: 0.8,
                     strokeWeight: 2,
-                    fillColor: '#FF0000',
-                    fillOpacity: 0.35,
+                    fillColor: '#ff5b54',
+                    fillOpacity: 0.45,
                     map: map,
                     center: location,
                     radius: 3
@@ -108,16 +108,22 @@ html
                     console.log(farmLinks[i]);
                     farmLinks[i].onclick = function (e) {
                         clearMap();
-
                         var ele = e.target;
                         var id = ele.innerHTML;
                         id = parseInt(id.split(" ")[1]) - 1;
                         var farm = farms[id];
                         map.panTo(farm.getCenter());
-                        farm.drawBounds(map);
+                        markers.push(farm.drawBounds(map));
                         farm.pins.forEach(function (pin) {
                             addPin(pin);
                         });
+
+                        // var grid = new Grid(farm.pins, 10);
+                        // grid.draw(map);
+
+                        // grid.getEdgeChunks().forEach(function(chunk){
+                            // chunk.select(map);
+                        // });
 
                     }
                 }
@@ -137,13 +143,15 @@ html
         script(src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js',
         integrity='sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn',
         crossorigin='anonymous')
+        link(rel='stylesheet', href='/stylesheets/maps.css')
     style.
         body {
             overflow: hidden;
         }
 
 block body
-    nav.navbar.navbar-toggleable-md.navbar-inverse.bg-primary
+
+    nav.navbar.navbar-toggleable-md.navbar-inverse.bg-inverse.navbar-padding
         button.navbar-toggler.navbar-toggler-right(type='button',
         data-toggle='collapse',
         data-target='#navbarSupportedContent',
@@ -152,15 +160,26 @@ block body
         aria-label='Toggle navigation')
             span.navbar-toggler-icon
 
-        a.navbar-brand(href='#') FOS
+        a.navbar-brand(href='http://food-origins.com') <img src = "http://food-origins.com/images/site-logo.png" alt = "logo" style = "width: 50px;height 50px">
         #navbarSupportedContent.collapse.navbar-collapse
             ul.navbar-nav.mr-auto
                 li.nav-item.dropdown
-                    a#navbarDropdownMenuLink.nav-link.dropdown-toggle(href='http://example.com',
+                    a#navbarDropdownMenuLink.nav-link.dropdown-toggle.editbar(href='https://en.wikipedia.org/wiki/Farm',
                     data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
-                        | Dropdown link
+                        | Farms
                     #farms.dropdown-menu(aria-labelledby='navbarDropdownMenuLink')
                         each d, i in JSON.parse(collections.farms)
                             a.dropdown-item(href='#')= 'Farm ' + String(i + 1)
+                //li.nav-item.options
+                //    a#navbarDropdownMenuLink.nav-link.dropdown-toggle(href='http://example.com',
+                //    data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+                //        | Options
+                //    #options.dropdown-menu(aria-labelledby='navbarDropdownMenuLink')
+                //        each d, i in JSON.parse(collections.farms)
+                //            a.dropdown-item(href='#')= 'Option ' + String(i + 1)
+                li.nav-item.heatmap
+                    a#navbarDropdownMenuLink.nav-link.toggle(href='#',
+                    data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+                        | Heat Map
 
     #map-canvas
