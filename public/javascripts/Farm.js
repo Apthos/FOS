@@ -1,7 +1,8 @@
 try {
     var express = require('express');
     var fs = require('fs');
-    var Boundary = require('./Boundary')
+    var Boundary = require('./Boundary');
+    var Grid = require('./Grid');
 } catch (e) { /* nothing */
 }
 
@@ -85,6 +86,10 @@ function Farm(pins, bypass) {
 
     this.allowBypass = function (allow) {
         this.bypass = allow;
+    };
+
+    this.createGrid = function(density){
+
     };
 
     this.hasBoundary = function () {

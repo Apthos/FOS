@@ -100,20 +100,18 @@ function Chunk(x, y, width, height, b_lat, b_long) {
         return this.pins.length < 1;
     };
 
-    this.isEdge = function(grid, density){
+    this.isEdge = function(grid, x_max, y_max){
         if (this.isEmpty())
             return false;
 
         var order = [[-1, 1], [0, 1], [1, 1], [1, 0],
             [1, -1], [0, -1], [-1, -1], [-1, 0]];
 
-        console.log(density);
-
         for (var i = 0; i < order.length; i++){
             var nx = this.x + order[i][0];
             var ny = this.y + order[i][1];
 
-            if ((nx < 0 || nx > density-1) || (ny < 0 || ny > density-1)){
+            if ((nx < 0 || nx > x_max-1) || (ny < 0 || ny > y_max-1)){
                 return true;
             } else {
                 console.log(nx + ' ' + ny);
@@ -157,6 +155,45 @@ function Chunk(x, y, width, height, b_lat, b_long) {
 
         return chunks;
     };
+
+    this.convertSeconds = function(seconds){
+        seconds = parseFloat(seconds);
+        return [Math.floor(seconds / 3600), Math.floor(seconds % 3600 / 60), Math.floor(seconds % 3600 % 60),
+            Math.floor((((seconds % 3600) % 60) / 10))];
+    };
+
+    this.process = function(){
+        if (this.pins[0].Quality === null){
+            console.warn('Chunk could not be processed because of improper data!');
+            return;
+        }
+
+        var sorted = [];
+
+        for (var i = 0; i < this.pins.length; i++) {
+            var qs = parseFloat(this.pins[i].Quality);
+            var date = this.pins[i].TimeStamp.split(" ")[0];
+            var year = parseInt(date.split('-')[0]);
+            var month = parseInt(date.split('-')[1]);
+            var day = parseInt(date.split('-')[2]);
+
+            var time = parseFloat(this.pins[i].TimeStamp.split(" ")[1]);
+
+            var results = this.convertSeconds(time);
+            var d = new Date(year, month, day, results[0], results[1], results[2]);
+            this.pins[i].setDate(d);
+
+            var index = this.pins[i].Date.getTime() / 1000;
+
+            if (sorted.length === 0){
+                sorted.push(this.pins[i]);
+            }
+
+            for (var 2)
+
+        }
+    }
+
 }
 
 try {

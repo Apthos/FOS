@@ -11,6 +11,8 @@ function Pin(TimeStamp, Latitude, Longitude, IMEI, ScannedValue, Ranch, Pallet, 
     this.Pallet = Pallet;
     this.Quality = parseFloat(Quality);
 
+    this.Date = null;
+
     this.toString = function () {
         return  "LAT:" + String(Latitude) + '/LONG:' +
                 String(Longitude);
@@ -23,7 +25,11 @@ function Pin(TimeStamp, Latitude, Longitude, IMEI, ScannedValue, Ranch, Pallet, 
     this.serialize = function(){
         return this.TimeStamp + "," + this.Latitude + "," + this.Longitude + "," + this.IMEI +
                 "," + this.ScannedValue + "," + this.Ranch + ',' + this.Pallet + ',' + this.Quality;
-    }
+    };
+
+    this.setDate =  function(date){
+        this.Date = date;
+    };
 
 }
 

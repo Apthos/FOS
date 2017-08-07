@@ -136,11 +136,11 @@ html
                          grid.draw(map);
 
                         function convertSecs(time) {
-                            time = Number(time);
-                            var hours = Math.floor(time / 3600);
-                            var minutes = Math.floor(time % 3600 / 60);
-                            var seconds = Math.floor(time % 3600 % 60);
-                            var ms = Math.floor((((time % 3600) % 60) / 10));
+                            seconds = Number(seconds);
+                            var hours = Math.floor(seconds / 3600);
+                            var minutes = Math.floor(seconds % 3600 / 60);
+                            var seconds = Math.floor(seconds % 3600 % 60);
+                            var ms = Math.floor((((seconds % 3600) % 60) / 10));
                             return [hours, minutes, seconds, ms];
                         }
 
@@ -159,18 +159,14 @@ html
                                     var month = parseInt(date.split('-')[1]);
                                     var day = parseInt(date.split('-')[2]);
                                     var time = parseFloat(pin.TimeStamp.split(" ")[1]);
-                                    var hours = 0;
-                                    var minutes = 0;
-                                    var seconds = 0;
-                                    var ms = 0;
-                                    console.log("Heres your time: ");
-                                    var results = convertSecs(time);
+                                    console.log("Heres your seconds: ");
+                                    var results = convertSecs(seconds);
                                     var d = new Date(year, month, day, hours, minutes, seconds);
                                     if (day >= 1 && day <= 7){
                                         firstweek.push(d);
                                     }
                                     avgQS = parseInt((qs + avgQS) / counter);
-                                    avgTime = (avgTime + time) / counter;
+                                    avgTime = (avgTime + seconds) / counter;
                                     // console.log(avgQS);
                                     var counter = 0;
                                     counter++;
