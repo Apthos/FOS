@@ -42,6 +42,10 @@ html
                 farms.push(farm);
             });
 
+            console.log(farms[1]);
+
+            console.log(farms);
+
             var salinas = new google.maps.LatLng(36.6777, -121.6555);
             var map = null;
 
@@ -59,6 +63,13 @@ html
                     mapOptions);
 
                 placeMarker(salinas, map);
+
+                // ------
+                    for (var i = 0; i < points[0].length; i++) {
+                        var pointplacer = new google.maps.LatLng(points[1][i], points[0][i]);
+                        placeMarker(pointplacer, map);
+                    }
+                // ------
 
                 google.maps.event.addListener(map, 'click', function (e) {
                     console.log(e.latLng);
@@ -86,7 +97,7 @@ html
                 markers.push(circle);
             }
 
-            function clearMap(){
+            function clearMap() {
                 for (var i = 0; i < markers.length; i++) {
                     markers[i].setMap(null);
                 }
@@ -108,6 +119,7 @@ html
                     console.log(farmLinks[i]);
                     farmLinks[i].onclick = function (e) {
                         clearMap();
+
                         var ele = e.target;
                         var id = ele.innerHTML;
                         id = parseInt(id.split(" ")[1]) - 1;
