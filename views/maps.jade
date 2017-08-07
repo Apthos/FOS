@@ -118,13 +118,55 @@ html
                             addPin(pin);
                         });
 
-                        // var grid = new Grid(farm.pins, 10);
-                        // grid.draw(map);
+                        console.log(farm.boundary);
 
-                        // grid.getEdgeChunks().forEach(function(chunk){
-                            // chunk.select(map);
-                        // });
+                         var grid = new Grid(farm.pins, 10);
+                         grid.draw(map);
 
+                        function convertSecs(time) {
+                            time = Number(time);
+                            var hours = Math.floor(time / 3600);
+                            var minutes = Math.floor(time % 3600 / 60);
+                            var seconds = Math.floor(time % 3600 % 60);
+                            var ms = Math.floor((((time % 3600) % 60) / 10));
+                            return [hours, minutes, seconds, ms];
+                        }
+
+                        for(var i = 0; i < 11; i++){
+                            for( var j = 0; j < 11; j++){
+                                var avgQS = 0;
+                                var avgTime = 0;
+                                var week = [];
+                                var chunk = grid.getChunk(i, j);
+                                var pins = chunk.pins;
+                                for (var i = 0; i < pins.length; i++) {
+                                    var pin = pins[i];
+                                    var qs = parseFloat(pin.Quality);
+                                    var date = pin.TimeStamp.split(" ")[0];
+                                    var year = parseInt(date.split('-')[0]);
+                                    var month = parseInt(date.split('-')[1]);
+                                    var day = parseInt(date.split('-')[2]);
+                                    var time = parseFloat(pin.TimeStamp.split(" ")[1]);
+                                    var hours = 0;
+                                    var minutes = 0;
+                                    var seconds = 0;
+                                    var ms = 0;
+                                    console.log("Heres your time: ");
+                                    var results = convertSecs(time);
+                                    var d = new Date(year, month, day, hours, minutes, seconds);
+                                    if (day >= 1 && day <= 7){
+                                        firstweek.push(d);
+                                    }
+                                    avgQS = parseInt((qs + avgQS) / counter);
+                                    avgTime = (avgTime + time) / counter;
+                                    // console.log(avgQS);
+                                    var counter = 0;
+                                    counter++;
+                                }
+                                console.log(chunk);
+                                console.log(pins);
+                            }
+                        }
                     }
                 }
 

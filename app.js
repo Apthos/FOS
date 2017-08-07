@@ -37,6 +37,8 @@ loader.loadSet('Generated.csv', true);
 var grid = new Grid(loader.getCurrentSet(), 500);
 var farms = grid.getFarms();
 
+console.log(farms.length);
+
 var testGrid = new Grid(farms[4].pins ,15);
 var testChunks = testGrid.getEdgeChunks();
 var points = [];
