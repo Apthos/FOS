@@ -2,13 +2,15 @@ doctype html
 html
     head
         meta(charset="utf-8")
-        title FOS
+        <link href="https://fonts.googleapis.com/css?family=Federo|Hind" rel="stylesheet">
+        title Dashboard
         style.
             html, body, #map-canvas {
                 height: 100%;
                 margin: 0px;
                 padding: 0px
             }
+
             #panel {
                 position: absolute;
                 top: 5px;
@@ -20,62 +22,39 @@ html
                 border: 1px solid #999;
             }
         script(src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJIlUHgkbX3pUv7guWvW4E6eqg_DlpaP0")
+        script(src='https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js')
         script(src="/javascripts/Grid.js")
         script(src="/javascripts/Pin.js")
         script(src="/javascripts/Chunk.js")
+        script(src="/javascripts/Farm.js")
+        script(src="/javascripts/Boundary.js")
         script.
 
-            var pins = []; // making array of actual pin objects
-            //JSON = Java Script Object Notation
-            JSON.parse('!{collections.pins}').forEach(function (p) {
-               pins.push(new Pin(p.TimeStamp, p.Latitude, p.Longitude, p.IMEI,
-               p.ScannedValue, p.Ranch));
+            var farms = [];
+
+            JSON.parse('!{collections.farms}').forEach(function (f) {
+                var farm = new Farm([]);
+                f.pins.forEach(function (p) {
+                    farm.addPin(p);
+                });
+                var boundary = new Boundary(f.boundary.posts);
+                farm.setBoundary(boundary);
+                farms.push(farm);
             });
 
-            var centerlatitude = 0.0;
-            var centerlongitude = 0.0;
+            console.log(farms[1]);
 
-            var H_Lat = -91;
-            var L_Lat = 91;
-            var H_Long = -181
-            var L_Long = 181;
+            console.log(farms);
 
-            pins.forEach(function(pin){
-                if (pin.Latitude > H_Lat && pin.Latitude != null) {
-                    H_Lat = pin.Latitude;
-                }
+            var salinas = new google.maps.LatLng(36.6777, -121.6555);
+            var map = null;
 
-                if (pin.Latitude < L_Lat && pin.Latitude != null){
-                    L_Lat = pin.Latitude;
-                }
-
-                if (pin.Longitude > H_Long && pin.Longitude != null){
-                    H_Long = pin.Longitude;
-                }
-
-                if (pin.Longitude < L_Long && pin.Longitude != null) {
-                    L_Long = pin.Longitude;
-                }
-
-            });
-
-            console.log("HLat: " + String(H_Lat) + " \ LLat: " + String(L_Lat));
-            console.log("HLong: " + String(H_Long) + " \ LLong: " + String(L_Long));
-
-            centerlatitude = (H_Lat + L_Lat)/2;
-            centerlongitude = (H_Long + L_Long)/2;
-
-            console.log("Lat: " + String(centerlatitude) + " / " + "Long: " + String(centerlongitude));
-
-            var map;
-            var grid;
-
-            var center = new google.maps.LatLng(centerlatitude, centerlongitude);
+            var markers = [];
 
             function initialize() {
                 var mapOptions = {
                     zoom: 15,
-                    center: center,
+                    center: salinas,
                     disableDefaultUI: true,
                     mapTypeId: 'satellite',
                     draggable: true
@@ -83,33 +62,46 @@ html
                 map = new google.maps.Map(document.getElementById('map-canvas'),
                     mapOptions);
 
-                placeMarker(center, map);
+                placeMarker(salinas, map);
+
+                // ------
+                    for (var i = 0; i < points[0].length; i++) {
+                        var pointplacer = new google.maps.LatLng(points[1][i], points[0][i]);
+                        placeMarker(pointplacer, map);
+                    }
+                // ------
 
                 google.maps.event.addListener(map, 'click', function (e) {
                     console.log(e.latLng);
                     placeMarker(e.latLng, map);
                 });
 
-                grid = new Grid(H_Lat, L_Lat, H_Long, L_Long, 100, pins, map);
+                bindFarms();
 
             }
 
-            // (p
-            function addPin(Pin){
+            function addPin(Pin) {
                 console.log("Pin:" + String(Pin.Latitude) + " - " + String(Pin.Longitude));
                 var location = new google.maps.LatLng(Pin.Latitude, Pin.Longitude);
                 var circle = new google.maps.Circle({
-                    strokeColor: '#FF0000',
+                    strokeColor: '#ff5b54',
                     strokeOpacity: 0.8,
                     strokeWeight: 2,
-                    fillColor: '#FF0000',
-                    fillOpacity: 0.35,
+                    fillColor: '#ff5b54',
+                    fillOpacity: 0.45,
                     map: map,
                     center: location,
                     radius: 3
                 });
                 circle.setMap(map);
+                markers.push(circle);
+            }
 
+            function clearMap() {
+                for (var i = 0; i < markers.length; i++) {
+                    markers[i].setMap(null);
+                }
+                markers = [];
             }
 
             function placeMarker(position, map) {
@@ -117,14 +109,83 @@ html
                     position: position,
                     map: map
                 });
+                markers.push(marker);
+            }
+
+            function bindFarms() {
+                var farmLinks = document.getElementById('farms').getElementsByTagName('a');
+
+                for (var i = 0; i < farmLinks.length; i++) {
+                    console.log(farmLinks[i]);
+                    farmLinks[i].onclick = function (e) {
+                        clearMap();
+
+                        var ele = e.target;
+                        var id = ele.innerHTML;
+                        id = parseInt(id.split(" ")[1]) - 1;
+                        var farm = farms[id];
+                        map.panTo(farm.getCenter());
+                        markers.push(farm.drawBounds(map));
+                        farm.pins.forEach(function (pin) {
+                            addPin(pin);
+                        });
+
+                        console.log(farm.boundary);
+
+                         var grid = new Grid(farm.pins, 10);
+                         grid.draw(map);
+
+                        function convertSecs(time) {
+                            seconds = Number(seconds);
+                            var hours = Math.floor(seconds / 3600);
+                            var minutes = Math.floor(seconds % 3600 / 60);
+                            var seconds = Math.floor(seconds % 3600 % 60);
+                            var ms = Math.floor((((seconds % 3600) % 60) / 10));
+                            return [hours, minutes, seconds, ms];
+                        }
+
+                        for(var i = 0; i < 11; i++){
+                            for( var j = 0; j < 11; j++){
+                                var avgQS = 0;
+                                var avgTime = 0;
+                                var week = [];
+                                var chunk = grid.getChunk(i, j);
+                                var pins = chunk.pins;
+                                for (var i = 0; i < pins.length; i++) {
+                                    var pin = pins[i];
+                                    var qs = parseFloat(pin.Quality);
+                                    var date = pin.TimeStamp.split(" ")[0];
+                                    var year = parseInt(date.split('-')[0]);
+                                    var month = parseInt(date.split('-')[1]);
+                                    var day = parseInt(date.split('-')[2]);
+                                    var time = parseFloat(pin.TimeStamp.split(" ")[1]);
+                                    console.log("Heres your seconds: ");
+                                    var results = convertSecs(seconds);
+                                    var d = new Date(year, month, day, hours, minutes, seconds);
+                                    if (day >= 1 && day <= 7){
+                                        firstweek.push(d);
+                                    }
+                                    avgQS = parseInt((qs + avgQS) / counter);
+                                    avgTime = (avgTime + seconds) / counter;
+                                    // console.log(avgQS);
+                                    var counter = 0;
+                                    counter++;
+                                }
+                                console.log(chunk);
+                                console.log(pins);
+                            }
+                        }
+                    }
+                }
+
             }
 
 
             google.maps.event.addDomListener(window, 'load', initialize);
 
-            window.onbeforeunload = function(){ window.scrollTo(0,0) };
-
-        script(src='https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js')
+            window.onbeforeunload = function () {
+                window.scrollTo(0, 0)
+            };
         link(rel='stylesheet',
         href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css',
         integrity='sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ',
@@ -132,33 +193,43 @@ html
         script(src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js',
         integrity='sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn',
         crossorigin='anonymous')
+        link(rel='stylesheet', href='/stylesheets/maps.css')
     style.
-        body{
+        body {
             overflow: hidden;
         }
 
 block body
-        script.
-            var plotMyShit = function () {
-                pins.forEach(function(pin){
-                    addPin(pin);
-                });
-            }
 
-        nav.navbar.navbar-toggleable-md.navbar-inverse.bg-primary
-            button.navbar-toggler.navbar-toggler-right(type='button',
-            data-toggle='collapse',
-            data-target='#navbarSupportedContent',
-            aria-controls='navbarSupportedContent',
-            aria-expanded='false',
-            aria-label='Toggle navigation')
-                span.navbar-toggler-icon
+    nav.navbar.navbar-toggleable-md.navbar-inverse.bg-inverse.navbar-padding
+        button.navbar-toggler.navbar-toggler-right(type='button',
+        data-toggle='collapse',
+        data-target='#navbarSupportedContent',
+        aria-controls='navbarSupportedContent',
+        aria-expanded='false',
+        aria-label='Toggle navigation')
+            span.navbar-toggler-icon
 
-            a.navbar-brand(href='#') FOS
-            #navbarSupportedContent.collapse.navbar-collapse
-                ul.navbar-nav.mr-auto
-                    li.nav-item
-                        #plotPoints
-                        a.nav-link(href="#", onclick='plotMyShit()') Plot
+        a.navbar-brand(href='http://food-origins.com') <img src = "http://food-origins.com/images/site-logo.png" alt = "logo" style = "width: 50px;height 50px">
+        #navbarSupportedContent.collapse.navbar-collapse
+            ul.navbar-nav.mr-auto
+                li.nav-item.dropdown
+                    a#navbarDropdownMenuLink.nav-link.dropdown-toggle.editbar(href='https://en.wikipedia.org/wiki/Farm',
+                    data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+                        | Farms
+                    #farms.dropdown-menu(aria-labelledby='navbarDropdownMenuLink')
+                        each d, i in JSON.parse(collections.farms)
+                            a.dropdown-item(href='#')= 'Farm ' + String(i + 1)
+                //li.nav-item.options
+                //    a#navbarDropdownMenuLink.nav-link.dropdown-toggle(href='http://example.com',
+                //    data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+                //        | Options
+                //    #options.dropdown-menu(aria-labelledby='navbarDropdownMenuLink')
+                //        each d, i in JSON.parse(collections.farms)
+                //            a.dropdown-item(href='#')= 'Option ' + String(i + 1)
+                li.nav-item.heatmap
+                    a#navbarDropdownMenuLink.nav-link.toggle(href='#',
+                    data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+                        | Heat Map
 
-        #map-canvas
+    #map-canvas

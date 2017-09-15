@@ -1,46 +1,29 @@
 var express = require('express');
 var router = express.Router();
 var Pin = require('../public/javascripts/Pin');
-var Cleaner = require('../public/javascripts/cleaner');
-var path = require('path');
+var Grid = require('../public/javascripts/Grid');
+var Cleaner = require('../public/javascripts/Cleaner');
 
-var collection = [];
+var loader = require('../public/javascripts/Loader').getInstance();
+//loader.cleanSet(true, true); # not needed since set is already clean
 
-var file = '/../public/data/set1.txt';
+var grid = new Grid(loader.getCurrentSet(), 100);
 
-var lineReader = require('readline').createInterface({
-    input: require('fs').createReadStream(__dirname + file)
+var farms = grid.getFarms();
+
+farms[3].writeCSV();
+
+var spawn = require("child_process").spawn;
+var process = spawn('python',["../public/python/test1.py", "anything"]);
+
+process.stdout.on('data', function (data){
+console.log(data.toString());
 });
 
-file = file.split('/')[4];
-
-lineReader.on('line', function (line) {
-    var pieces = line.split(',');
-
-
-    if (file == 'set1.txt') {
-        var p = new Pin(pieces[1], parseFloat(pieces[2]),
-            parseFloat(pieces[3]), pieces[4], pieces[5], pieces[8]);
-    } else {
-        var p = new Pin(pieces[0], parseFloat(pieces[1]),
-            parseFloat(pieces[2]), pieces[3], pieces[4], pieces[7]);
-    }
-    collection.push(p);
-});
-
-var cleaner = null;
-
-lineReader.on('close', function () {
-  
-    cleaner = new Cleaner(collection, true, true);
-
-});
-
-/* GET home page. */
 router.get('/', function(req, res, next) {
     res.render('maps', {
         collections: {
-            pins: JSON.stringify(collection)
+            farms: JSON.stringify(loader.getFarms())
         }
     });
 });
